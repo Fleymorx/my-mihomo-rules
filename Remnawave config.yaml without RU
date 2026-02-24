@@ -6,8 +6,8 @@ log-level: warning
 ipv6: false
 keep-alive-interval: 30
 enable-process: true
-find-process-mode: always
-unified-delay: false
+find-process-mode: strict
+unified-delay: true
 tcp-concurrent: true
 
 profile:
@@ -16,18 +16,13 @@ profile:
 
 sniffer:
   enable: true
-  force-dns-mapping: true
   parse-pure-ip: true
   sniff:
     HTTP:
-      ports:
-        - 80
-        - 8080-8880
+      ports: [80, 8080-8880]
       override-destination: true
     TLS:
-      ports:
-        - 443
-        - 8443
+      ports: [443, 8443]
 
 tun:
   enable: true
@@ -36,7 +31,6 @@ tun:
   auto-detect-interface: true
   dns-hijack:
     - any:53
-    - tcp://any:53
   mtu: 1500
   strict-route: true
 
