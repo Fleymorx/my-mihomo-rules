@@ -1,0 +1,256 @@
+#######################################################################################################
+# Описание:
+# Веб-интерфейс доступен по адресу http://192.168.1.1:9090/ui (192.168.1.1 = IP роутера). 
+# После добавления сервера и запуска mihomo необходимо зайти в веб-интерфейс и выбрать нужное подключение для селекторов.
+# Группа "GLOBAL VPN" определяет куда (на какой сервер) будет отправляться трафик, который не переопределенным иными правилами.
+# Остальные группы имеют приоритет над группой "GLOBAL VPN" для переопределения (например, YouTube должен быть выше чем Google).
+#######################################################################################################
+# Для работы Discord требуется проксировать порты XKeen: 80,443,2000:2300,8443,19200:19400,50000:50030
+# Для работы Whatsapp/Telegram требуется проксировать порты Xkeen: 80,443,596:599,1400,3478,5222
+# Не забываем прописать IP своего сервера в /etc/xkeen/ip_exclude.lst
+#######################################################################################################
+redir-port: 1182
+tproxy-port: 1181
+log-level: silent
+allow-lan: true
+mode: rule
+find-process-mode: off
+tcp-concurrent: true
+unified-delay: true
+external-controller: 0.0.0.0:9090
+external-ui: ./zash
+external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip
+
+profile:
+  store-selected: true
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP: 
+      ports: [80]
+      override-destination: true
+    TLS:
+      ports: [443]
+
+# Использование VLESS подключения (НЕ ПОДПИСКА). Удалить или заполнить данный блок.
+proxies:
+
+   - name: *Name vless connection*
+     type: vless
+     server: *your-server*
+     port: 443
+     network: tcp
+     udp: true
+     tls: true
+     packet-encoding: xudp
+     servername: *your-sni*
+     client-fingerprint: chrome
+     uuid: *your-uuid*
+     flow: xtls-rprx-vision
+     reality-opts:
+       public-key: *your-public-key*
+       short-id: *your-shortid*
+
+# Провайдеры VPN (подписка). Удалить или заполнить данный блок.
+proxy-providers:
+
+  *Name proxy service*:
+    type: http
+    url: *url from proxy service*
+    path: ./proxy-providers/*name of proxy service*.yaml
+    interval: 3600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 3000
+
+# Селекторы
+proxy-groups:
+  - name: GLOBAL VPN
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Other
+    type: select
+    icon: https://www.svgrepo.com/show/12922/growth.svg
+    include-all: true
+    proxies: [DIRECT]
+
+# Блокировка рекламы
+  - name: Adblock
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
+    include-all: true
+    proxies: [DIRECT, REJECT]
+
+# RU, BY, KZ зона
+  - name: RU Zone
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png
+    include-all: true
+    proxies: [DIRECT]
+
+# Выборочные сервисы
+  - name: Apple
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Google
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Google Play
+    type: select
+    icon: https://www.svgrepo.com/show/353828/google-play-icon.svg
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Github
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/GitHub.png
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Microsoft
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Microsoft.png
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Reddit
+    type: select
+    icon: https://www.svgrepo.com/show/452094/reddit.svg
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Spotify
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: YouTube
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
+    include-all: true
+    proxies: [DIRECT]
+
+# Игровые сервисы
+  - name: Steam
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Steam.png
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Origin
+    type: select
+    icon: https://www.svgrepo.com/show/354154/origin.svg
+    include-all: true
+    proxies: [DIRECT]
+
+  - name: Epic Games
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Epic_Games.png
+    include-all: true
+    proxies: [DIRECT]
+    
+# Правила маршрутизации
+rule-anchors:
+  domain: &domain { type: http, format: mrs, behavior: domain, interval: 86400 }
+  ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400 }
+  ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400 }
+  classical: &classical { type: http, format: text, behavior: classical, interval: 86400 }
+  inline: &inline { type: inline, behavior: classical }
+
+rule-providers:
+
+  # Локальная сеть
+  geosite-private: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/private.mrs }
+  geoip-private: {<<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/private.mrs }
+
+  # RU зона
+  geosite-ru: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/category-ru.mrs }
+  geoip-ru: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/ru.mrs }
+  geoip-by: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/by.mrs }
+  geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs}
+
+  # Реклама
+  adlist-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/category-ads-all.mrs }
+
+  # Выборочные сервисы
+  apple-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
+  google-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google.mrs }
+  google-geoip: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/google.mrs }
+  googleplay-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google-play.mrs }
+  github-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/github.mrs }
+  microsoft-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/microsoft.mrs }
+  reddit-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/reddit.mrs }
+  spotify-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/spotify.mrs }
+  youtube-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs }
+
+  # Игровые сервисы
+  steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
+  origin-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/origin.mrs }
+  ea-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/ea.mrs }
+  epicgames-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/epicgames.mrs }
+
+  # Ручные списки в DIRECT
+  direct-inline: # СВОИ ПРАВИЛА
+    type: inline
+    behavior: classical
+    payload: # Типы правил и примеры: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-SUFFIX,kz
+      - DOMAIN-SUFFIX,by
+      - DOMAIN-SUFFIX,2ip.io #Мусорный сервис сотрудничащий с РФ
+  
+  # Ручные списки в VPN
+  proxy-inline:
+    type: inline
+    behavior: classical
+    payload: # Типы правил и примеры: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-KEYWORD,rezka #Rezka.ag и любые ее проявления
+      - DOMAIN-KEYWORD,voidboost #Rezka.ag CDN сервера с фильмами
+
+# Правила
+rules:
+  # Блокировки в REJECT
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT #Блокировка QUIC
+  - AND,((NETWORK,udp),(DST-PORT,853)),REJECT # Блокировка QUIC DNS
+  - RULE-SET,adlist-geosite,Adblock
+
+  # Локальная сеть в DIRECT
+  - OR,((RULE-SET,geosite-private),(RULE-SET,geoip-private,no-resolve)),DIRECT
+
+  # Ручные списки в VPN
+  - RULE-SET,proxy-inline,Other
+  
+  # Ручные списки в DIRECT
+  - RULE-SET,direct-inline,DIRECT
+  
+  # Выборочные сервисы
+  - RULE-SET,apple-geosite,Apple
+  - RULE-SET,youtube-geosite,YouTube
+  - RULE-SET,googleplay-geosite,Google Play
+  - OR,((RULE-SET,google-geosite),(RULE-SET,google-geoip)),Google
+  - RULE-SET,github-geosite,Github
+  - RULE-SET,microsoft-geosite,Microsoft
+  - RULE-SET,reddit-geosite,Reddit
+  - RULE-SET,spotify-geosite,Spotify
+  
+  # Игровые сервисы
+  - RULE-SET,steam-geosite,Steam
+  - OR,((RULE-SET,origin-geosite),(RULE-SET,ea-geosite)),Origin
+  - RULE-SET,epicgames-geosite,Epic Games
+
+  # RU Zone
+  - OR,((RULE-SET,geosite-ru),(RULE-SET,geoip-ru),(RULE-SET,geoip-by),(RULE-SET,geoip-kz)),RU Zone
+
+  # Остальной трафик
+  - MATCH,GLOBAL VPN
