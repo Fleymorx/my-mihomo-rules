@@ -9,10 +9,9 @@ lan-allowed-ips: # Разрешенные IP для подключения к LA
   - ::1/128
   - fc00::/7
 mode: rule
-log-level: warning
+log-level: silent
 ipv6: false
 keep-alive-interval: 30
-enable-process: true
 find-process-mode: strict
 unified-delay: true
 tcp-concurrent: true
@@ -63,7 +62,6 @@ dns:
   prefer-h3: false
   use-hosts: true
   use-system-hosts: true
-  respect-rules: true
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
@@ -74,20 +72,18 @@ dns:
     - 1.1.1.1
     - 8.8.8.8
   nameserver:
-    - https://cloudflare-dns.com/dns-query
-    - https://dns.google/dns-query
-    - tls://1.1.1.1
-    - tls://8.8.8.8
+    - https://cloudflare-dns.com/dns-query#GLOBAL VPN
+    - https://dns.google/dns-query#GLOBAL VPN
+    - tls://1.1.1.1#GLOBAL VPN
+    - tls://8.8.8.8#GLOBAL VPN
   proxy-server-nameserver:
     - https://cloudflare-dns.com/dns-query
     - https://dns.google/dns-query
     - tls://1.1.1.1
     - tls://8.8.8.8
   direct-nameserver:
-    - https://cloudflare-dns.com/dns-query
-    - https://dns.google/dns-query
-    - tls://1.1.1.1
-    - tls://8.8.8.8
+    - https://common.dot.dns.yandex.net
+    - tls://77.88.8.8
 
 # Селекторы
 proxy-groups:
@@ -174,9 +170,9 @@ rule-providers:
 # Правила
 rules:
   # Блокировки в REJECT
-  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT #Блокировка QUIC
-  - AND,((NETWORK,udp),(DST-PORT,853)),REJECT #Блокировка QUIC DNS
-  - RULE-SET,adlist-geosite,REJECT #Блокировка рекламы
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT-DROP #Блокировка QUIC
+  - AND,((NETWORK,udp),(DST-PORT,853)),REJECT-DROP #Блокировка QUIC DNS
+  - RULE-SET,adlist-geosite,REJECT-DROP #Блокировка рекламы
 
   # Локальная сеть в DIRECT
   - OR,((RULE-SET,geosite-private),(RULE-SET,geoip-private,no-resolve)),DIRECT
