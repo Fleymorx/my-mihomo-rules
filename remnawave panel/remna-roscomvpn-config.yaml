@@ -133,8 +133,10 @@ rule-providers:
   
   # Выборочные сервисы
   apple-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
+  google-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google.mrs }
   googleplay-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google-play.mrs }
   microsoft-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/microsoft.mrs }
+  youtube-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs }
 
   # Игровые сервисы
   steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
@@ -181,6 +183,9 @@ rules:
   
   # Выборочные сервисы
   - RULE-SET,apple-geosite,♻️ Без VPN
+  - RULE-SET,youtube-geosite,GLOBAL VPN
+  - RULE-SET,googleplay-geosite,♻️ Без VPN
+  - RULE-SET,google-geosite,♻️ Без VPN
   - RULE-SET,googleplay-geosite,♻️ Без VPN
   - RULE-SET,microsoft-geosite,♻️ Без VPN
 
