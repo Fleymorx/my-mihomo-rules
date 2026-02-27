@@ -85,6 +85,8 @@ dns:
     - https://common.dot.dns.yandex.net
     - tls://77.88.8.8
 
+proxies: #LEAVE THIS LINE
+
 # Селекторы
 proxy-groups:
   - name: GLOBAL VPN
