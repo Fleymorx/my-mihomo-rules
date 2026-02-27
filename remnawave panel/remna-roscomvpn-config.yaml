@@ -1,3 +1,4 @@
+# Кастомный конфиг с использованием RU Zone согласно спискам https://github.com/hydraponique/roscomvpn-routing
 # Преднастройки
 mixed-port: 7890
 allow-lan: false
