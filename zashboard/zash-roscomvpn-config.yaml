@@ -86,7 +86,7 @@ proxy-groups:
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
     include-all: true
-    proxies: [DIRECT, REJECT]
+    proxies: [DIRECT, REJECT-DROP]
 
 # RU, BY, KZ зона
   - name: RU Zone
@@ -174,12 +174,12 @@ rule-anchors:
 rule-providers:
 
   # Локальная сеть
-  geosite-private: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/private.mrs }
-  geoip-private: {<<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/private.mrs }
+  geosite-private: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/private.mrs }
+  geoip-private: {<<: *ipcidr, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/release/mihomo/private.mrs }
 
   # RU зона
-  geosite-ru: { <<: *domain, url: https://github.com/hydraponique/roscomvpn-geosite/raw/master/release/mihomo/category-ru.mrs }
-  geoip-ru: { <<: *ipcidr, url: https://github.com/hydraponique/roscomvpn-geoip/raw/master/release/mihomo/direct.mrs }
+  geosite-ru: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/category-ru.mrs }
+  geoip-ru: { <<: *ipcidr, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/release/mihomo/direct.mrs }
   geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs}
 
   # Реклама
@@ -209,7 +209,6 @@ rule-providers:
     behavior: classical
     payload: #Типы правил: https://wiki.metacubex.one/ru/config/rules/
       - DOMAIN-SUFFIX,kz
-      - DOMAIN-SUFFIX,by
       - DOMAIN-SUFFIX,2ip.io #Мусорный сервис сотрудничащий с РФ
   
   # Ручные списки в VPN
@@ -223,8 +222,8 @@ rule-providers:
 # Правила
 rules:
   # Блокировки в REJECT
-  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT #Блокировка QUIC
-  - AND,((NETWORK,udp),(DST-PORT,853)),REJECT # Блокировка QUIC DNS
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT-DROP #Блокировка QUIC
+  - AND,((NETWORK,udp),(DST-PORT,853)),REJECT-DROP #Блокировка QUIC DNS
   - OR,((RULE-SET,adlist-geosite),(RULE-SET,winspy-geosite)),Adblock #Блокировка рекламы и Windows трекеров
 
   # Локальная сеть в DIRECT
