@@ -186,7 +186,6 @@ rules:
   - RULE-SET,youtube-geosite,GLOBAL VPN
   - RULE-SET,googleplay-geosite,♻️ Без VPN
   - RULE-SET,google-geosite,♻️ Без VPN
-  - RULE-SET,googleplay-geosite,♻️ Без VPN
   - RULE-SET,microsoft-geosite,♻️ Без VPN
 
   # Games
