@@ -131,12 +131,8 @@ rule-providers:
   # Выборочные сервисы
   apple-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
   google-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google.mrs }
-  google-geoip: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/google.mrs }
   googleplay-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google-play.mrs }
-  github-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/github.mrs }
   microsoft-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/microsoft.mrs }
-  reddit-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/reddit.mrs }
-  spotify-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/spotify.mrs }
   youtube-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs }
 
   # Игровые сервисы
@@ -187,10 +183,8 @@ rules:
   - RULE-SET,apple-geosite,♻️ Без VPN
   - RULE-SET,youtube-geosite,GLOBAL VPN
   - RULE-SET,googleplay-geosite,♻️ Без VPN
-  - OR,((RULE-SET,google-geosite),(RULE-SET,google-geoip)),♻️ Без VPN
-  - RULE-SET,github-geosite,♻️ Без VPN
+  - RULE-SET,google-geosite,♻️ Без VPN
   - RULE-SET,microsoft-geosite,♻️ Без VPN
-  - RULE-SET,reddit-geosite,♻️ Без VPN
 
   # Games
   - RULE-SET,games-process,Games
