@@ -86,7 +86,7 @@ proxy-groups:
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
     include-all: true
-    proxies: [DIRECT, REJECT]
+    proxies: [DIRECT, REJECT-DROP]
 
 # RU, BY, KZ зона
   - name: RU Zone
