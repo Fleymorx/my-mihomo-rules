@@ -190,7 +190,6 @@ rule-providers:
   # Выборочные сервисы
   apple-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
   google-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google.mrs }
-  google-geoip: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/google.mrs }
   googleplay-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google-play.mrs }
   github-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/github.mrs }
   microsoft-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/microsoft.mrs }
@@ -240,7 +239,7 @@ rules:
   - RULE-SET,apple-geosite,Apple
   - RULE-SET,youtube-geosite,YouTube
   - RULE-SET,googleplay-geosite,Google Play
-  - OR,((RULE-SET,google-geosite),(RULE-SET,google-geoip)),Google
+  - RULE-SET,google-geosite,Google
   - RULE-SET,github-geosite,Github
   - RULE-SET,microsoft-geosite,Microsoft
   - RULE-SET,reddit-geosite,Reddit
