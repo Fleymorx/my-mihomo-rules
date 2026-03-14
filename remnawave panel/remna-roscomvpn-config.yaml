@@ -2,17 +2,9 @@
 # Преднастройки
 mixed-port: 7890
 allow-lan: false
-lan-allowed-ips: # Разрешенные IP для подключения к LAN
-  - 127.0.0.0/8
-  - 10.0.0.0/8
-  - 172.16.0.0/12
-  - 192.168.0.0/16
-  - ::1/128
-  - fc00::/7
 mode: rule
 log-level: silent
 ipv6: false
-keep-alive-interval: 30
 find-process-mode: strict
 unified-delay: true
 tcp-concurrent: true
@@ -31,23 +23,23 @@ sniffer:
     TLS:
       ports: [443, 8443]
   skip-dst-address:
-    - 0.0.0.0/8
+    - 224.0.0.0/3
     - 10.0.0.0/8
-    - 100.64.0.0/10
     - 127.0.0.0/8
-    - 169.254.0.0/16
+    - 100.64.0.0/10
     - 172.16.0.0/12
+    - 198.18.0.0/15
+    - 169.254.0.0/16
+    - 192.168.0.0/16
     - 192.0.0.0/24
     - 192.0.2.0/24
     - 192.88.99.0/24
-    - 192.168.0.0/16
     - 198.51.100.0/24
     - 203.0.113.0/24
-    - 224.0.0.0/3
-    - ::/127
     - fc00::/7
-    - fe80::/10
     - ff00::/8
+    - fe80::/10
+    - ::/127
 
 tun:
   enable: true
@@ -57,55 +49,64 @@ tun:
   dns-hijack:
     - any:53
   strict-route: true
+  route-exclude-address:
+    - 224.0.0.0/3
+    - 10.0.0.0/8
+    - 127.0.0.0/8
+    - 100.64.0.0/10
+    - 172.16.0.0/12
+    - 169.254.0.0/16
+    - 192.168.0.0/16
+    - 192.0.0.0/24
+    - 192.0.2.0/24
+    - 192.88.99.0/24
+    - 198.51.100.0/24
+    - 203.0.113.0/24
+    - fc00::/7
+    - ff00::/8
+    - fe80::/10
+    - ::/127
 
 dns:
   enable: true
   prefer-h3: false
-  use-hosts: true
-  use-system-hosts: true
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  fake-ip-filter-mode: blacklist
   fake-ip-filter:
     - rule-set:geosite-private
   default-nameserver:
-    - 1.1.1.1
-    - 8.8.8.8
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
   nameserver:
-    - https://cloudflare-dns.com/dns-query#GLOBAL VPN
-    - https://dns.google/dns-query#GLOBAL VPN
-    - tls://1.1.1.1#GLOBAL VPN
-    - tls://8.8.8.8#GLOBAL VPN
+    - https://1.1.1.1/dns-query#GLOBAL VPN
+    - https://8.8.8.8/dns-query#GLOBAL VPN
   proxy-server-nameserver:
-    - https://cloudflare-dns.com/dns-query
-    - https://dns.google/dns-query
-    - tls://1.1.1.1
-    - tls://8.8.8.8
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
   direct-nameserver:
-    - https://common.dot.dns.yandex.net
-    - tls://77.88.8.8
+    - https://77.88.8.8/dns-query
 
 proxies: #LEAVE THIS LINE
 
 # Селекторы
 proxy-groups:
-  - name: GLOBAL VPN
+  - name: 🛡️ VPN
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
     proxies: # LEAVE THIS LINE!
 
-  - name: ♻️ Без VPN
+  - name: 🔓 Без VPN
     remnawave:
       include-proxies: false
     type: select
     hidden: true
     proxies: [DIRECT]
 
-  - name: Games
+  - name: 🎮 Games
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Game.png
-    proxies: [♻️ Без VPN]
+    proxies: [🔓 Без VPN]
 
 # Правила маршрутизации
 rule-anchors:
@@ -124,19 +125,20 @@ rule-providers:
 
   # RU зона
   geosite-ru: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/category-ru.mrs }
+  geosite-whitelist: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/whitelist.mrs }
   geoip-ru: { <<: *ipcidr, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/release/mihomo/direct.mrs }
   geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs}
 
   # Реклама
   adlist-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/category-ads-all.mrs }
-  winspy-geosite: { <<: *domain, url: https://github.com/hydraponique/roscomvpn-geosite/raw/master/release/mihomo/win-spy.mrs }
+  winspy-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/win-spy.mrs }
   
   # Выборочные сервисы
-  apple-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
+  apple-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/apple.mrs }
   google-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google.mrs }
-  googleplay-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google-play.mrs }
-  microsoft-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/microsoft.mrs }
-  youtube-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs }
+  googleplay-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/google-play.mrs }
+  microsoft-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/microsoft.mrs }
+  youtube-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/youtube.mrs }
 
   # Игровые сервисы
   steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
@@ -170,35 +172,35 @@ rules:
   # Блокировки в REJECT
   - AND,((NETWORK,udp),(DST-PORT,443)),REJECT-DROP #Блокировка QUIC
   - AND,((NETWORK,udp),(DST-PORT,853)),REJECT-DROP #Блокировка QUIC DNS
-  - OR,((RULE-SET,adlist-geosite),(RULE-SET,winspy-geosite)),REJECT-DROP #Блокировка рекламы
+  - OR,((RULE-SET,adlist-geosite),(RULE-SET,winspy-geosite)),REJECT-DROP #Блокировка рекламы и Windows трекеров
 
   # Локальная сеть в DIRECT
   - OR,((RULE-SET,geosite-private),(RULE-SET,geoip-private,no-resolve)),DIRECT
 
   # Ручные списки в VPN
-  - RULE-SET,proxy-inline,GLOBAL VPN
+  - RULE-SET,proxy-inline,🛡️ VPN
   
   # Ручные списки в DIRECT
-  - RULE-SET,direct-inline,♻️ Без VPN
+  - RULE-SET,direct-inline,🔓 Без VPN
   
   # Выборочные сервисы
-  - RULE-SET,apple-geosite,♻️ Без VPN
-  - RULE-SET,youtube-geosite,GLOBAL VPN
-  - RULE-SET,googleplay-geosite,♻️ Без VPN
-  - RULE-SET,google-geosite,♻️ Без VPN
-  - RULE-SET,microsoft-geosite,♻️ Без VPN
+  - RULE-SET,apple-geosite,🔓 Без VPN
+  - RULE-SET,youtube-geosite,🛡️ VPN
+  - RULE-SET,googleplay-geosite,🔓 Без VPN
+  - RULE-SET,google-geosite,🔓 Без VPN
+  - RULE-SET,microsoft-geosite,🔓 Без VPN
 
   # Games
-  - RULE-SET,games-process,Games
-  - RULE-SET,steam-geosite,♻️ Без VPN
-  - OR,((RULE-SET,origin-geosite),(RULE-SET,ea-geosite)),♻️ Без VPN
-  - RULE-SET,epicgames-geosite,♻️ Без VPN
+  - RULE-SET,games-process,🎮 Games
+  - RULE-SET,steam-geosite,🔓 Без VPN
+  - OR,((RULE-SET,origin-geosite),(RULE-SET,ea-geosite)),🔓 Без VPN
+  - RULE-SET,epicgames-geosite,🔓 Без VPN
   
   # Torrents в DIRECT
-  - OR,((RULE-SET,torrent-clients),(RULE-SET,torrent-trackers)),♻️ Без VPN
+  - OR,((RULE-SET,torrent-clients),(RULE-SET,torrent-trackers)),DIRECT
   
   # RU zone
-  - OR,((RULE-SET,geosite-ru),(RULE-SET,geoip-ru),(RULE-SET,geoip-kz)),♻️ Без VPN
+  - OR,((RULE-SET,geosite-ru),(RULE-SET,geosite-whitelist),(RULE-SET,geoip-ru),(RULE-SET,geoip-kz)),DIRECT
   
   # Все остальное в PROXY
-  - MATCH,GLOBAL VPN
+  - MATCH,🛡️ VPN
