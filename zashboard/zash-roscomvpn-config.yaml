@@ -180,6 +180,7 @@ rule-providers:
 
   # RU зона
   geosite-ru: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/category-ru.mrs }
+  geosite-whitelist: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/whitelist.mrs }
   geoip-ru: { <<: *ipcidr, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/release/mihomo/direct.mrs }
   geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs}
 
@@ -251,7 +252,7 @@ rules:
   - RULE-SET,epicgames-geosite,Epic Games
 
   # RU Zone
-  - OR,((RULE-SET,geosite-ru),(RULE-SET,geoip-ru),(RULE-SET,geoip-kz)),RU Zone
+  - OR,((RULE-SET,geosite-ru)(RULE-SET,geosite-whitelist),(RULE-SET,geoip-ru),(RULE-SET,geoip-kz)),RU Zone
 
   # Остальной трафик
   - MATCH,GLOBAL VPN
