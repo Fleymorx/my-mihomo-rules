@@ -134,11 +134,11 @@ rule-providers:
   winspy-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/win-spy.mrs }
   
   # Выборочные сервисы
-  apple-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/apple.mrs }
+  apple-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
   google-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google.mrs }
-  googleplay-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/google-play.mrs }
-  microsoft-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/microsoft.mrs }
-  youtube-geosite: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/youtube.mrs }
+  googleplay-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google-play.mrs }
+  microsoft-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/microsoft.mrs }
+  youtube-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs }
 
   # Игровые сервисы
   steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
