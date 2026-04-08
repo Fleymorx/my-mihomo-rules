@@ -171,7 +171,6 @@ rule-providers:
 rules:
   # Блокировки в REJECT
   - AND,((NETWORK,udp),(DST-PORT,443)),REJECT-DROP #Блокировка QUIC
-  - AND,((NETWORK,udp),(DST-PORT,853)),REJECT-DROP #Блокировка QUIC DNS
   - IP-CIDR,::/0,REJECT-DROP,no-resolve #Блокировка ipv6 не попавшая в DNS
   - OR,((RULE-SET,adlist-geosite),(RULE-SET,winspy-geosite)),REJECT-DROP #Блокировка рекламы и Windows трекеров
 
