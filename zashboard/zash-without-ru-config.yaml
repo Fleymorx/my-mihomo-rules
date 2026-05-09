@@ -20,7 +20,7 @@ tcp-concurrent: true
 unified-delay: true
 external-controller: 0.0.0.0:9090
 external-ui: ./zash
-external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip
+external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist-no-fonts.zip
 
 profile:
   store-selected: true
