@@ -217,7 +217,7 @@ rule-providers:
 # Правила
 rules:
   # Блокировки в REJECT
-  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT #Блокировка QUIC
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT-DROP #Блокировка QUIC
   - RULE-SET,adlist-geosite,Adblock
   
   # Ручные списки в VPN
