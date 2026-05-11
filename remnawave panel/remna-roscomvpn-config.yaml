@@ -114,7 +114,7 @@ rule-anchors:
   ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400 }
   ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400 }
   classical: &classical { type: http, format: text, behavior: classical, interval: 86400 }
-  classical-yaml: &classical-yaml { type: http, format: yaml, behavior: classical, interval 86400}
+  classical-yaml: &classical-yaml { type: http, format: yaml, behavior: classical, interval: 86400}
   inline: &inline { type: inline, behavior: classical }
 
 rule-providers:
