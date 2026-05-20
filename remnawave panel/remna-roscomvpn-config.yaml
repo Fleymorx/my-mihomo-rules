@@ -154,6 +154,12 @@ rule-providers:
   # Выборочные сервисы
   apple-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/apple.mrs }
   microsoft-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/microsoft.mrs }
+  telegram-geosite: { <<: *domain,url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/telegram.mrs }
+  youtube-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/youtube.mrs }
+  github-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/github.mrs }
+  googleplay-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/google-play.mrs }
+  twitchads-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch-ads.mrs }
+  twitch-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch.mrs }
 
   # Игровые сервисы
   steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
@@ -204,9 +210,17 @@ rules:
   # Ручные списки в DIRECT
   - RULE-SET,direct-inline,DIRECT
   
-  # Выборочные сервисы
+  # Выборочные сервисы в PROXY
+  - RULE-SET,telegram-geosite,VPN
+  - RULE-SET,youtube-geosite,VPN
+  - RULE-SET,github-geosite,VPN
+  - RULE-SET,googleplay-geosite,VPN
+  - RULE-SET,twitchads-geosite,VPN
+  
+  # Выборочные сервисы в DIRECT
   - RULE-SET,apple-geosite,DIRECT
   - RULE-SET,microsoft-geosite,DIRECT
+  - RULE-SET,twitch-geosite,DIRECT
 
   # Games
   - RULE-SET,games-process,Games
