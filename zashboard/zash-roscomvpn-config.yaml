@@ -38,21 +38,21 @@ sniffer:
 # Использование VLESS подключения (НЕ ПОДПИСКА). Удалить или заполнить данный блок.
 proxies:
 
-   - name: *Name vless connection*
-     type: vless
-     server: *your-server*
-     port: 443
-     network: tcp
-     udp: true
-     tls: true
-     packet-encoding: xudp
-     servername: *your-sni*
-     client-fingerprint: chrome
-     uuid: *your-uuid*
-     flow: xtls-rprx-vision
-     reality-opts:
-       public-key: *your-public-key*
-       short-id: *your-shortid*
+  - name: *Name vless connection*
+    type: vless
+    server: *your-server*
+    port: 443
+    network: tcp
+    udp: true
+    tls: true
+    packet-encoding: xudp
+    servername: *your-sni*
+    client-fingerprint: chrome
+    uuid: *your-uuid*
+    flow: xtls-rprx-vision
+    reality-opts:
+      public-key: *your-public-key*
+      short-id: *your-shortid*
 
 # Провайдеры VPN (подписка). Удалить или заполнить данный блок.
 proxy-providers:
@@ -65,7 +65,10 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 3000
+      interval: 300
+      timeout: 2000
+      lazy: false
+      expected-status: 204
 
 # Селекторы
 proxy-groups:
@@ -73,26 +76,36 @@ proxy-groups:
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,⚡️ Auto]
+
+  - name: ⚡️ Auto
+    type: url-test
+    hidden: false
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 150
+    include-all: true
+    exclude-filter: "LTE|Обход|Белые|Белых|Russia|Россия" # Исключаем сервера для обхода БС
+    proxies: # LEAVE THIS LINE
 
   - name: Other
     type: select
     icon: https://www.svgrepo.com/show/12922/growth.svg
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
 # Блокировка рекламы
   - name: Adblock
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
-    include-all: true
-    proxies: [DIRECT, REJECT-DROP]
+    include-all: false
+    proxies: [DIRECT, REJECT-DROP, PASS]
 
 # RU, BY, KZ зона
   - name: RU Zone
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png
-    include-all: true
+    include-all: false
     proxies: [DIRECT]
 
 # Выборочные сервисы
@@ -100,68 +113,74 @@ proxy-groups:
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
-  - name: Google
+  - name: Telegram
     type: select
-    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: Google Play
     type: select
     icon: https://www.svgrepo.com/show/353828/google-play-icon.svg
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: Github
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/GitHub.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: Microsoft
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Microsoft.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: Reddit
     type: select
     icon: https://www.svgrepo.com/show/452094/reddit.svg
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: Spotify
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: YouTube
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
+
+  - name: Twitch (FIX Best Quality)
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Twitch.png
+    include-all: true
+    proxies: [DIRECT,GLOBAL VPN]
 
 # Игровые сервисы
   - name: Steam
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Steam.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: Origin
     type: select
     icon: https://www.svgrepo.com/show/354154/origin.svg
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
 
   - name: Epic Games
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Epic_Games.png
     include-all: true
-    proxies: [DIRECT]
+    proxies: [DIRECT,GLOBAL VPN]
     
 # Правила маршрутизации
 rule-anchors:
@@ -174,24 +193,26 @@ rule-anchors:
 rule-providers:
 
   # RU зона
-  geosite-ru: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/category-ru.mrs }
-  geosite-whitelist: { <<: *domain, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/release/mihomo/whitelist.mrs }
-  geoip-ru: { <<: *ipcidr, url: https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/release/mihomo/direct.mrs }
-  geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs}
+  geosite-ru: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/category-ru.mrs }
+  geosite-whitelist: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/whitelist.mrs }
+  geoip-ru: { <<: *ipcidr, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geoip/release/mihomo/direct.mrs }
+  geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs }
 
   # Реклама
   adlist-geosite: { <<: *domain, url: https://github.com/zxc-rv/ad-filter/releases/latest/download/adlist.mrs }
-  winspy-geosite: { <<: *domain, url: https://github.com/hydraponique/roscomvpn-geosite/raw/master/release/mihomo/win-spy.mrs }
+  winspy-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/win-spy.mrs }
 
   # Выборочные сервисы
-  apple-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
-  google-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google.mrs }
-  googleplay-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/google-play.mrs }
-  github-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/github.mrs }
-  microsoft-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/microsoft.mrs }
+  apple-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/apple.mrs }
+  microsoft-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/microsoft.mrs }
+  telegram-geosite: { <<: *domain,url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/telegram.mrs }
+  youtube-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/youtube.mrs }
+  googleplay-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/google-play.mrs }
+  github-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/github.mrs }
   reddit-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/reddit.mrs }
   spotify-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/spotify.mrs }
-  youtube-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs }
+  twitchads-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch-ads.mrs }
+  twitch-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch.mrs }
 
   # Игровые сервисы
   steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
@@ -228,14 +249,16 @@ rules:
   - RULE-SET,direct-inline,DIRECT
   
   # Выборочные сервисы
-  - RULE-SET,apple-geosite,Apple
+  - RULE-SET,telegram-geosite,Telegram
   - RULE-SET,youtube-geosite,YouTube
   - RULE-SET,googleplay-geosite,Google Play
-  - RULE-SET,google-geosite,Google
   - RULE-SET,github-geosite,Github
-  - RULE-SET,microsoft-geosite,Microsoft
-  - RULE-SET,reddit-geosite,Reddit
   - RULE-SET,spotify-geosite,Spotify
+  - RULE-SET,twitchads-geosite,Twitch (FIX Best Quality) # Рекомендовано в PROXY (Фикс высокого качества)
+  - RULE-SET,apple-geosite,Apple # Рекомендовано в DIRECT
+  - RULE-SET,microsoft-geosite,Microsoft # Рекомендовано в DIRECT
+  - RULE-SET,reddit-geosite,Reddit # Рекомендовано в DIRECT
+  - RULE-SET,twitch-geosite,DIRECT # По умолчанию в DIRECT
   
   # Игровые сервисы
   - RULE-SET,steam-geosite,Steam
