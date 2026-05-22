@@ -157,6 +157,7 @@ rule-providers:
   telegram-geosite: { <<: *domain,url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/telegram.mrs }
   youtube-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/youtube.mrs }
   github-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/github.mrs }
+  reddit-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/reddit.mrs }
   googleplay-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/google-play.mrs }
   twitchads-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch-ads.mrs }
   twitch-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch.mrs }
@@ -215,11 +216,12 @@ rules:
   - RULE-SET,youtube-geosite,VPN
   - RULE-SET,github-geosite,VPN
   - RULE-SET,googleplay-geosite,VPN
-  - RULE-SET,twitchads-geosite,VPN
+  - RULE-SET,twitchads-geosite,VPN # По умолчанию в PROXY (Фикс высокого качества)
   
   # Выборочные сервисы в DIRECT
   - RULE-SET,apple-geosite,DIRECT
   - RULE-SET,microsoft-geosite,DIRECT
+  - RULE-SET,reddit-geosite,DIRECT
   - RULE-SET,twitch-geosite,DIRECT
 
   # Games
