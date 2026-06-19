@@ -222,7 +222,7 @@ rules:
 
   # Games
   - RULE-SET,games-process,Games
-  - RULE-SET,steam-geosite,DIRECT
+  - OR,((PROCESS-NAME-REGEX,(?i).*steam.*),(RULE-SET,steam-geosite)),DIRECT
   - OR,((RULE-SET,origin-geosite),(RULE-SET,ea-geosite)),DIRECT
   - RULE-SET,epicgames-geosite,DIRECT
   
