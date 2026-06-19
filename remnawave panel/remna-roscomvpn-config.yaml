@@ -4,10 +4,11 @@ mixed-port: 7890
 allow-lan: false
 mode: rule
 log-level: silent
-ipv6: true
-find-process-mode: strict
+ipv6: false
+find-process-mode: always
 unified-delay: true
 tcp-concurrent: true
+keep-alive-interval: 30
 
 profile:
   store-selected: true
@@ -48,6 +49,7 @@ tun:
   auto-detect-interface: true
   dns-hijack:
     - any:53
+    - tcp://any:53
   strict-route: true
   route-exclude-address:
     - 224.0.0.0/3
@@ -146,6 +148,7 @@ rule-providers:
   geosite-whitelist: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/whitelist.mrs }
   geoip-ru: { <<: *ipcidr, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geoip/release/mihomo/direct.mrs }
   geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs }
+  ru-app-list: { <<: *classical-yaml, url: https://raw.githubusercontent.com/legiz-ru/mihomo-rule-sets/main/other/ru-app-list.yaml }
 
   # Реклама
   adlist-geosite: { <<: *domain, url: https://github.com/zxc-rv/ad-filter/releases/latest/download/adlist.mrs }
@@ -198,12 +201,17 @@ rules:
   - OR,((RULE-SET,geosite-private),(RULE-SET,geoip-private,no-resolve)),DIRECT
 
   # Блокировки в REJECT
-  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT-DROP #Блокировка QUIC
   - IP-CIDR,::/0,REJECT-DROP,no-resolve #Блокировка ipv6 не попавшая в DNS
   - OR,((RULE-SET,adlist-geosite),(RULE-SET,winspy-geosite)),REJECT-DROP #Блокировка рекламы и Windows трекеров
 
   # Torrents в DIRECT
   - OR,((RULE-SET,torrent-clients),(RULE-SET,torrent-trackers)),DIRECT
+
+  # РУ приложения в DIRECT
+  - RULE-SET,ru-app-list,DIRECT
+
+  # Блокировка QUIC
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT-DROP
 
   # Ручные списки в VPN
   - RULE-SET,proxy-inline,VPN
