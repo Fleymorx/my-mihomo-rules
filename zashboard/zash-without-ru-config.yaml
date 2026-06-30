@@ -10,7 +10,7 @@
 # Для работы Whatsapp/Telegram требуется проксировать порты Xkeen: 80,443,596:599,1400,3478,5222
 # Не забываем прописать IP своего сервера в /etc/xkeen/ip_exclude.lst
 #######################################################################################################
-redir-port: 1182
+redir-port: 1182 # Если нужен только режим Tproxy, то следует удалить данный порт
 tproxy-port: 1181
 log-level: silent
 allow-lan: true
@@ -65,7 +65,9 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 3000
+      interval: 300
+      lazy: false
+      expected-status: 204
 
 # Селекторы
 proxy-groups:
@@ -74,6 +76,16 @@ proxy-groups:
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
     include-all: true
     proxies: [DIRECT]
+
+  - name: ⚡️ Auto
+    type: url-test
+    hidden: false
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    max-failed-times: 3
+    include-all: true
+    exclude-filter: "LTE|Обход|Белые|Белых|Russia|Россия" # Исключаем сервера для обхода БС
+    proxies: # LEAVE THIS LINE
 
   - name: Other
     type: select
