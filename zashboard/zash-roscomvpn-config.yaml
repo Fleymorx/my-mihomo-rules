@@ -75,7 +75,7 @@ proxy-groups:
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
     include-all: true
-    proxies: [DIRECT,⚡️ Auto]
+    proxies: [DIRECT,Fastest,Fallback]
 
   - name: Fastest
     type: url-test
