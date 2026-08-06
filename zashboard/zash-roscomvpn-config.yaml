@@ -67,7 +67,6 @@ proxy-providers:
       enable: true
       url: https://www.gstatic.com/generate_204
       interval: 300
-      lazy: false
       expected-status: 204
 
 # Селекторы
@@ -78,15 +77,25 @@ proxy-groups:
     include-all: true
     proxies: [DIRECT,⚡️ Auto]
 
-  - name: ⚡️ Auto
+  - name: Fastest
     type: url-test
     hidden: false
     url: https://www.gstatic.com/generate_204
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     interval: 300
     max-failed-times: 3
     include-all: true
     exclude-filter: "LTE|Обход|Белые|Белых|Russia|Россия" # Исключаем сервера для обхода БС
     proxies: # LEAVE THIS LINE
+
+  - name: Fallback
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png
+    interval: 300
+    max-failed-times: 3
+    include-all: true
+    exclude-filter: "LTE|Обход|Белые|Белых|Russia|Россия" # Исключаем сервера для обхода БС
 
   - name: Other
     type: select
