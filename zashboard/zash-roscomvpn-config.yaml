@@ -86,7 +86,6 @@ proxy-groups:
     max-failed-times: 3
     include-all: true
     exclude-filter: "LTE|Обход|Белые|Белых|Russia|Россия" # Исключаем сервера для обхода БС
-    proxies: # LEAVE THIS LINE
 
   - name: Fallback
     type: fallback
