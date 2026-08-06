@@ -185,10 +185,10 @@ proxy-groups:
     
 # Правила маршрутизации
 rule-anchors:
-  domain: &domain { type: http, format: mrs, behavior: domain, interval: 86400 }
-  ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400 }
-  ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400 }
-  classical: &classical { type: http, format: text, behavior: classical, interval: 86400 }
+  domain: &domain { type: http, format: mrs, behavior: domain, interval: 86400, proxy: Fallback }
+  ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400, proxy: Fallback }
+  ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400, proxy: Fallback }
+  classical: &classical { type: http, format: text, behavior: classical, interval: 86400, proxy: Fallback }
   inline: &inline { type: inline, behavior: classical }
 
 rule-providers:
