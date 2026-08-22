@@ -128,10 +128,8 @@ dns:
     - "*.ipv6.microsoft.com"
     - "speedtest.cros.wr.pvp.net"
   default-nameserver:
-    - 77.88.8.8#DIRECT
-    - 77.88.8.1#DIRECT
-    - 8.8.8.8#DIRECT
-    - 1.1.1.1#DIRECT
+    - https://1.1.1.1/dns-query#DIRECT
+    - https://8.8.8.8/dns-query#DIRECT
   nameserver:
     - 1.1.1.1#VPN
     - 8.8.8.8#VPN
