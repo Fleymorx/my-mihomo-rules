@@ -94,7 +94,18 @@ proxy-groups:
     interval: 300
     max-failed-times: 3
     include-all: true
-    exclude-filter: "LTE|Обход|Белые|Белых|Russia|Россия" # Исключаем сервера для обхода БС
+    exclude-filter: "DNS" # Исключаем сервера для обхода БС
+
+  - name: Fallback Rules #Прокси группа которая скрытно используется для провайдеров правил, а именно скачивание файлов правил как через DIRECT, так и через PROXY
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    max-failed-times: 3
+    lazy: false
+    hidden: true
+    include-all: true
+    exclude-filter: "DNS"
+    proxies: [DIRECT]
 
   - name: Other
     type: select
@@ -192,10 +203,10 @@ proxy-groups:
     
 # Правила маршрутизации
 rule-anchors:
-  domain: &domain { type: http, format: mrs, behavior: domain, interval: 86400, proxy: Fallback }
-  ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400, proxy: Fallback }
-  ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400, proxy: Fallback }
-  classical: &classical { type: http, format: text, behavior: classical, interval: 86400, proxy: Fallback }
+  domain: &domain { type: http, format: mrs, behavior: domain, interval: 86400, proxy: Fallback Rules }
+  ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400, proxy: Fallback Rules }
+  ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400, proxy: Fallback Rules }
+  classical: &classical { type: http, format: text, behavior: classical, interval: 86400, proxy: Fallback Rules }
   inline: &inline { type: inline, behavior: classical }
 
 rule-providers:
