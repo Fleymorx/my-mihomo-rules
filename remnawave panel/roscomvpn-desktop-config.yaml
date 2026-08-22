@@ -1,0 +1,302 @@
+# ============================================================
+#  Mihomo — профиль DESKTOP (Windows / macOS)
+#  RU Zone по спискам https://github.com/hydraponique/roscomvpn-routing
+#
+#  Отличия от мобильных профилей:
+#    - find-process-mode: strict (нужен для ru-app-list / games-process / Steam)
+#    - unified-delay / tcp-concurrent включены
+#    - нет tun.exclude-package (Android-only)
+#
+#  ВНИМАНИЕ (Windows): strict-route добавляет firewall-правила и может ломать VirtualBox / некоторые сценарии виртуализации.
+# ============================================================
+
+# Преднастройки
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: silent
+ipv6: true
+find-process-mode: strict
+unified-delay: true
+tcp-concurrent: true
+
+keep-alive-idle: 600
+keep-alive-interval: 600
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+sniffer:
+  enable: true
+  parse-pure-ip: true
+  override-destination: false
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+    TLS:
+      ports: [443, 8443]
+  skip-dst-address:
+    - 0.0.0.0/8
+    - 10.0.0.0/8
+    - 100.64.0.0/10
+    - 127.0.0.0/8
+    - 169.254.0.0/16
+    - 172.16.0.0/12
+    - 192.0.0.0/24
+    - 192.0.2.0/24
+    - 192.88.99.0/24
+    - 192.168.0.0/16
+    - 198.18.0.0/15
+    - 198.51.100.0/24
+    - 203.0.113.0/24
+    - 224.0.0.0/3
+    - ::/128
+    - ::1/128
+    - ::ffff:0:0/96
+    - 100::/64
+    - 2001:2::/48
+    - 2001:db8::/32
+    - 3fff::/20
+    - fc00::/7
+    - fe80::/10
+    - ff00::/8
+
+tun:
+  enable: true
+  stack: mixed
+  auto-route: true
+  auto-detect-interface: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+  strict-route: true
+  route-exclude-address:
+    - 224.0.0.0/3
+    - 10.0.0.0/8
+    - 127.0.0.0/8
+    - 100.64.0.0/10
+    - 172.16.0.0/12
+    - 169.254.0.0/16
+    - 192.168.0.0/16
+    - 192.0.0.0/24
+    - 192.0.2.0/24
+    - 192.88.99.0/24
+    - 198.51.100.0/24
+    - 203.0.113.0/24
+    - fc00::/7
+    - ff00::/8
+    - fe80::/10
+    - ::/127
+
+dns:
+  enable: true
+  prefer-h3: false
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - rule-set:geosite-private
+    - "*.lan"
+    - "*.local"
+    - "+.home.arpa"
+    - "*.localdomain"
+    - "stun.*.*.*"
+    - "stun.*.*"
+    - "time.windows.com"
+    - "time.nist.gov"
+    - "time.apple.com"
+    - "*.openwrt.pool.ntp.org"
+    - "pool.ntp.org"
+    - "ntp.ubuntu.com"
+    - "time1.apple.com"
+    - "time2.apple.com"
+    - "time3.apple.com"
+    - "time4.apple.com"
+    - "time5.apple.com"
+    - "time6.apple.com"
+    - "time7.apple.com"
+    - "time1.google.com"
+    - "time2.google.com"
+    - "time3.google.com"
+    - "time4.google.com"
+    - "*.msftconnecttest.com"
+    - "*.msftncsi.com"
+    - "+.xboxlive.com"
+    - "*.*.stun.playstation.net"
+    - "xbox.*.*.microsoft.com"
+    - "*.ipv6.microsoft.com"
+    - "speedtest.cros.wr.pvp.net"
+  default-nameserver:
+    - 77.88.8.8#DIRECT
+    - 77.88.8.1#DIRECT
+    - 8.8.8.8#DIRECT
+    - 1.1.1.1#DIRECT
+  nameserver:
+    - 1.1.1.1#VPN
+    - 8.8.8.8#VPN
+  proxy-server-nameserver:
+    - https://1.1.1.1/dns-query#DIRECT
+    - https://8.8.8.8/dns-query#DIRECT
+  direct-nameserver:
+    - https://common.dot.dns.yandex.net/dns-query#DIRECT
+    - system
+  nameserver-policy:
+    rule-set:geosite-private:
+      - system
+    rule-set:geosite-ru,geosite-whitelist,direct-inline:
+      - https://common.dot.dns.yandex.net/dns-query#DIRECT
+      - system
+    rule-set:adlist-geosite,winspy-geosite:
+      - rcode://refused
+
+proxies: 
+  - name: DNS-OUT
+    type: dns
+    hidden: true
+  # LEAVE THIS LINE
+
+# Селекторы
+proxy-groups:
+  - name: VPN
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
+    proxies: [⚡️ Auto] # LEAVE THIS LINE!
+
+  - name: ⚡️ Auto
+    type: fallback
+    hidden: true
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    max-failed-times: 3
+    proxies: # LEAVE THIS LINE!
+
+  - name: 🔓 Без VPN
+    type: select
+    hidden: true
+    remnawave:
+      include-proxies: false
+    proxies: [DIRECT]
+
+  - name: Games
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Game.png
+    remnawave:
+      include-proxies: false
+    proxies: [🔓 Без VPN,VPN] # LEAVE THIS LINE!
+
+# Правила маршрутизации
+rule-anchors:
+  domain: &domain { type: http, format: mrs, behavior: domain, interval: 86400, proxy: ⚡️ Auto }
+  ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400, proxy: ⚡️ Auto }
+  ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400, proxy: ⚡️ Auto }
+  classical: &classical { type: http, format: text, behavior: classical, interval: 86400, proxy: ⚡️ Auto }
+  classical-yaml: &classical-yaml { type: http, format: yaml, behavior: classical, interval: 86400, proxy: ⚡️ Auto }
+  inline: &inline { type: inline, behavior: classical }
+
+rule-providers:
+
+  # Локальная сеть
+  geosite-private: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/private.mrs }
+  geoip-private: {<<: *ipcidr, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geoip/release/mihomo/private.mrs }
+
+  # RU зона
+  geosite-ru: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/category-ru.mrs }
+  geosite-whitelist: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/whitelist.mrs }
+  geoip-ru: { <<: *ipcidr, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geoip/release/mihomo/direct.mrs }
+  geoip-kz: { <<: *ipcidr, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/kz.mrs }
+  ru-app-list: { <<: *classical-yaml, url: https://raw.githubusercontent.com/legiz-ru/mihomo-rule-sets/main/other/ru-app-list.yaml }
+
+  # Реклама
+  adlist-geosite: { <<: *domain, url: https://github.com/zxc-rv/ad-filter/releases/latest/download/adlist.mrs }
+  winspy-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/win-spy.mrs }
+  
+  # Выборочные сервисы
+  apple-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/apple.mrs }
+  microsoft-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/microsoft.mrs }
+  telegram-geosite: { <<: *domain,url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/telegram.mrs }
+  youtube-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/youtube.mrs }
+  github-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/github.mrs }
+  reddit-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/reddit.mrs }
+  googleplay-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/google-play.mrs }
+  twitchads-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch-ads.mrs }
+  twitch-geosite: { <<: *domain, url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/twitch.mrs }
+
+  # Игровые сервисы
+  steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
+  origin-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/origin.mrs }
+  ea-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/ea.mrs }
+  epicgames-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/epicgames.mrs }
+  games-process: { <<: *classical-yaml, url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/games-direct.yaml }
+
+  # Другие сервисы
+  torrent-clients: { <<: *classical-yaml, url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-clients.yaml }
+  torrent-trackers: { <<: *domain, url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-trackers.mrs }
+
+  # Ручные списки в DIRECT
+  direct-inline:
+    type: inline
+    behavior: classical
+    payload: #Типы правил: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-SUFFIX,kz
+      - DOMAIN-SUFFIX,2ip.io #Мусорный сервис сотрудничащий с РФ
+  
+  # Ручные списки в VPN
+  proxy-inline:
+    type: inline
+    behavior: classical
+    payload: #Типы правил: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-KEYWORD,rezka #Rezka.ag и любые ее проявления
+      - DOMAIN-KEYWORD,voidboost #Rezka.ag CDN сервера с фильмами
+
+# Правила
+rules:
+  # DNS Hijack
+  - DST-PORT,53,DNS-OUT
+
+  # Локальная сеть в DIRECT
+  - OR,((RULE-SET,geosite-private),(RULE-SET,geoip-private,no-resolve)),DIRECT
+
+  # Блокировки в REJECT
+  - IP-CIDR,::/0,REJECT,no-resolve #Блокировка ipv6 не попавшая в DNS
+  - OR,((RULE-SET,adlist-geosite),(RULE-SET,winspy-geosite)),REJECT-DROP #Блокировка рекламы и Windows трекеров
+
+  # Torrents в DIRECT
+  - OR,((RULE-SET,torrent-clients),(RULE-SET,torrent-trackers)),DIRECT
+
+  # РУ приложения в DIRECT
+  - RULE-SET,ru-app-list,DIRECT
+
+  # Блокировка QUIC
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT
+
+  # Ручные списки в VPN
+  - RULE-SET,proxy-inline,VPN
+  
+  # Ручные списки в DIRECT
+  - RULE-SET,direct-inline,DIRECT
+  
+  # Выборочные сервисы в PROXY
+  - RULE-SET,telegram-geosite,VPN
+  - RULE-SET,youtube-geosite,VPN
+  - RULE-SET,github-geosite,VPN
+  - RULE-SET,googleplay-geosite,VPN
+  - RULE-SET,twitchads-geosite,VPN # По умолчанию в PROXY (Фикс высокого качества)
+  
+  # Выборочные сервисы в DIRECT
+  - RULE-SET,apple-geosite,DIRECT
+  - RULE-SET,microsoft-geosite,DIRECT
+  - RULE-SET,reddit-geosite,DIRECT
+  - RULE-SET,twitch-geosite,DIRECT
+
+  # Games
+  - RULE-SET,games-process,Games
+  - OR,((PROCESS-NAME-REGEX,(?i).*steam.*),(RULE-SET,steam-geosite)),DIRECT
+  - OR,((RULE-SET,origin-geosite),(RULE-SET,ea-geosite)),DIRECT
+  - RULE-SET,epicgames-geosite,DIRECT
+  
+  # RU zone
+  - OR,((RULE-SET,geosite-ru),(RULE-SET,geosite-whitelist),(RULE-SET,geoip-ru),(RULE-SET,geoip-kz)),DIRECT
+  
+  # Все остальное в PROXY
+  - MATCH,VPN
