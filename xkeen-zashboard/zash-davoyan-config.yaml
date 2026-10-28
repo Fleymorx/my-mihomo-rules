@@ -1,0 +1,215 @@
+#######################################################################################################
+# Описание:
+# Конфиг для роутеров Keenetic + xKeen Mihomo + Zashboard
+# Веб-интерфейс доступен по адресу http://192.168.1.1:9090/ui (192.168.1.1 = IP роутера). 
+# После добавления сервера и запуска mihomo необходимо зайти в веб-интерфейс и выбрать нужное подключение для селекторов.
+# Группа "GLOBAL VPN" определяет куда (на какой сервер) будет отправляться трафик, который не переопределенным иными правилами.
+# Остальные группы имеют приоритет над группой "GLOBAL VPN" для переопределения (например, YouTube должен быть выше чем Google).
+#######################################################################################################
+# Для работы Discord требуется проксировать порты XKeen: 80,443,2000:2300,8443,19200:19400,50000:50030
+# Для работы Whatsapp/Telegram требуется проксировать порты Xkeen: 80,443,596:599,1400,3478,5222
+# Не забываем прописать IP своего сервера с маской /32 в /etc/xkeen/ip_exclude.lst
+#######################################################################################################
+redir-port: 1182 # Если нужен только режим Tproxy, то следует удалить данный порт
+tproxy-port: 1181
+log-level: error
+allow-lan: true
+mode: rule
+find-process-mode: off
+tcp-concurrent: true
+unified-delay: true
+external-controller: 0.0.0.0:9090
+external-ui: ./zash
+external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist-no-fonts.zip
+
+profile:
+  store-selected: true
+
+sniffer:
+  enable: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+    HTTP: 
+      ports: [80, 8080]
+    TLS:
+      ports: [443, 8443]
+
+# Использование VLESS подключения (НЕ ПОДПИСКА). Удалить или заполнить данный блок.
+#proxies:
+#
+#  - name: *Name vless connection*
+#    type: vless
+#    server: *your-server*
+#    port: 443
+#    network: tcp
+#    udp: true
+#    tls: true
+#    packet-encoding: xudp
+#    servername: *your-sni*
+#    client-fingerprint: chrome
+#    uuid: *your-uuid*
+#    flow: xtls-rprx-vision
+#    reality-opts:
+#      public-key: *your-public-key*
+#      short-id: *your-shortid*
+
+# Провайдеры VPN (подписка). Удалить или заполнить данный блок.
+proxy-providers:
+
+  Provider_Name:
+    type: http
+    url: ***
+    path: ./proxy-providers/***_sub.yaml
+    interval: 3600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      expected-status: 204
+# Селекторы
+proxy-groups:
+  - name: GLOBAL VPN
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
+    include-all: true
+    proxies: [DIRECT,Fastest,Fallback]
+
+  - name: Fastest
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
+    tolerance: 50
+    interval: 300
+    max-failed-times: 3
+    include-all: true
+    exclude-filter: "DNS|LTE|Обход|Белые|Белых|Russia|Россия"
+
+  - name: Fallback
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png
+    interval: 300
+    max-failed-times: 3
+    include-all: true
+    exclude-filter: "DNS"
+
+  - name: Fallback Rules # Прокси группа которая скрытно используется для провайдеров правил, а именно скачивание файлов правил как через DIRECT, так и через PROXY
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    max-failed-times: 3
+    lazy: false
+    hidden: true
+    include-all: true
+    exclude-filter: "DNS" # Исключаем перехватчик DNS
+    proxies: [DIRECT]
+
+  - name: Other
+    type: select
+    icon: https://www.svgrepo.com/show/12922/growth.svg
+    include-all: true
+    proxies: [DIRECT,GLOBAL VPN]
+
+# Блокировка рекламы
+  - name: Adblock
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
+    include-all: false
+    proxies: [REJECT, PASS]
+
+# RU, BY, KZ зона
+  - name: RU Zone
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png
+    include-all: false
+    proxies: [DIRECT]
+
+# Выборочные сервисы
+
+# Игровые сервисы
+  - name: Steam
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Steam.png
+    include-all: true
+    proxies: [DIRECT,GLOBAL VPN]
+
+  - name: Origin
+    type: select
+    icon: https://www.svgrepo.com/show/354154/origin.svg
+    include-all: true
+    proxies: [DIRECT,GLOBAL VPN]
+
+  - name: Epic Games
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Epic_Games.png
+    include-all: true
+    proxies: [DIRECT,GLOBAL VPN]
+    
+# Правила маршрутизации
+rule-anchors:
+  domain: &domain { type: http, format: mrs, behavior: domain, interval: 86400, proxy: Fallback Rules }
+  ip: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400, proxy: Fallback Rules }
+  ip-text: &ipcidr-text { type: http, format: text, behavior: ipcidr, interval: 86400, proxy: Fallback Rules }
+  classical-text: &classical-text { type: http, format: text, behavior: classical, interval: 86400, proxy: Fallback Rules }
+  classical-yaml: &classical-yaml { type: http, format: yaml, behavior: classical, interval: 86400, proxy: Fallback Rules }
+  inline: &inline { type: inline, behavior: classical }
+
+rule-providers:
+
+  # RU зона
+  geosite-ru: { <<: *domain, url: https://raw.githubusercontent.com/Davoyan/mihomo-rule-sets/main/rules/category-ru.mrs }
+  geoip-ru: { <<: *ipcidr, url: https://raw.githubusercontent.com/Davoyan/mihomo-rule-sets/main/ip-for-ru/lists/ips-for-ru.mrs }
+
+  # Реклама
+  adlist-geosite: { <<: *domain, url: https://github.com/zxc-rv/ad-filter/releases/latest/download/adlist.mrs }
+
+  # Выборочные сервисы
+  ru-inside-geosite: { <<: *classical-text, url: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-clashx.lst }
+
+  # Игровые сервисы
+  steam-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/steam.mrs }
+  origin-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/origin.mrs }
+  ea-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/ea.mrs }
+  epicgames-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/epicgames.mrs }
+
+  # Ручные списки в DIRECT
+  direct-inline:
+    type: inline
+    behavior: classical
+    payload: # Типы правил: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-SUFFIX,example.com
+
+  
+  # Ручные списки в VPN
+  proxy-inline:
+    type: inline
+    behavior: classical
+    payload: # Типы правил: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-SUFFIX,example.com
+
+# Правила
+rules:
+  # Ручные списки в VPN
+  - RULE-SET,proxy-inline,Other
+
+  # Ручные списки в DIRECT
+  - RULE-SET,direct-inline,DIRECT
+
+  # Блокировки в REJECT
+  - RULE-SET,adlist-geosite,Adblock #Блокировка рекламы и Windows трекеров
+  - AND,((NETWORK,udp),(DST-PORT,443)),REJECT #Блокировка QUIC
+  
+  # Выборочные сервисы
+  - RULE-SET,ru-inside-geosite,GLOBAL VPN
+  
+  # Игровые сервисы
+  - RULE-SET,steam-geosite,Steam
+  - OR,((RULE-SET,origin-geosite),(RULE-SET,ea-geosite)),Origin
+  - RULE-SET,epicgames-geosite,Epic Games
+
+  # RU Zone
+  - OR,((RULE-SET,geosite-ru),(RULE-SET,geoip-ru)),RU Zone
+
+  # Остальной трафик
+  - MATCH,GLOBAL VPN
