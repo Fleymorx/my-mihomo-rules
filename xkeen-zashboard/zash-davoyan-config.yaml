@@ -180,7 +180,6 @@ rule-providers:
     payload: # Типы правил: https://wiki.metacubex.one/ru/config/rules/
       - DOMAIN-SUFFIX,example.com
 
-  
   # Ручные списки в VPN
   proxy-inline:
     type: inline
