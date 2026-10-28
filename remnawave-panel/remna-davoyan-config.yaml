@@ -214,15 +214,14 @@ rule-providers:
     type: inline
     behavior: classical
     payload: #Типы правил: https://wiki.metacubex.one/ru/config/rules/
-      - DOMAIN-SUFFIX,2ip.io #Мусорный сервис сотрудничащий с РФ
+      - DOMAIN-SUFFIX,example.com
   
   # Ручные списки в VPN
   proxy-inline:
     type: inline
     behavior: classical
     payload: #Типы правил: https://wiki.metacubex.one/ru/config/rules/
-      - DOMAIN-KEYWORD,rezka #Rezka.ag и любые ее проявления
-      - DOMAIN-KEYWORD,voidboost #Rezka.ag CDN сервера с фильмами
+      - DOMAIN-SUFFIX,example.com
 
 # Правила
 rules:
@@ -237,7 +236,7 @@ rules:
 
   # Блокировки в REJECT
   - IP-CIDR,::/0,REJECT,no-resolve #Блокировка ipv6 не попавшая в DNS
-  - RULE-SET,adlist-geosite,REJECT-DROP #Блокировка рекламы
+  - RULE-SET,adlist-geosite,REJECT #Блокировка рекламы
 
   # Torrents в DIRECT
   - OR,((RULE-SET,torrent-clients),(RULE-SET,torrent-trackers)),DIRECT
