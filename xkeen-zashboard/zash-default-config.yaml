@@ -1,0 +1,230 @@
+#######################################################################################################
+# Описание:
+# Конфиг для роутеров Keenetic + xKeen Mihomo + Zashboard
+# Веб-интерфейс доступен по адресу http://192.168.1.1:9090/ui (192.168.1.1 = IP роутера). 
+# После добавления сервера и запуска mihomo необходимо зайти в веб-интерфейс и выбрать нужное подключение для селекторов.
+# Группа "GLOBAL VPN" определяет куда (на какой сервер) будет отправляться трафик, который не переопределенным иными правилами.
+# Остальные группы имеют приоритет над группой "GLOBAL VPN" для переопределения (например, YouTube должен быть выше чем Google).
+#######################################################################################################
+# Для работы Discord требуется проксировать порты XKeen: 80,443,2053:2096,8443,19200:19400,50000:50100
+# Для работы Whatsapp/Telegram требуется проксировать порты Xkeen: 80,443,596:599,1400,3478,5222
+# Не забываем прописать IP своего сервера с маской /32 в /etc/xkeen/ip_exclude.lst
+#######################################################################################################
+
+#redir-port: 1182 Если нужен только режим Tproxy, то следует удалить данный порт
+tproxy-port: 1181
+log-level: silent
+allow-lan: true
+mode: rule
+find-process-mode: off
+tcp-concurrent: true
+unified-delay: true
+external-controller: 0.0.0.0:9090
+external-ui: ./zash
+external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist-no-fonts.zip
+
+profile:
+  store-selected: true
+
+sniffer:
+  enable: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+    HTTP: 
+      ports: [80, 8080]
+    TLS:
+      ports: [443, 8443]
+  skip-dst-address: [rule-set:telegram@ipcidr]
+  skip-domain: [+.vivox.com] # Фикс войс-чата в некоторых играх
+
+# Использование VLESS подключения (НЕ ПОДПИСКА). Удалить или заполнить данный блок.
+#proxies:
+#
+#  - name: *Name vless connection*
+#    type: vless
+#    server: *your-server*
+#    port: 443
+#    network: tcp
+#    udp: true
+#    tls: true
+#    packet-encoding: xudp
+#    servername: *your-sni*
+#    client-fingerprint: chrome
+#    uuid: *your-uuid*
+#    flow: xtls-rprx-vision
+#    reality-opts:
+#      public-key: *your-public-key*
+#      short-id: *your-shortid*
+
+# Провайдеры VPN (подписка). Удалить или заполнить данный блок.
+proxy-providers:
+
+  Provider_Name:
+    type: http
+    url: ***
+    path: ./proxy-providers/***_sub.yaml
+    interval: 3600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      expected-status: 204
+
+anchors:
+  a1: &domain { type: http, format: mrs, behavior: domain, interval: 86400, proxy: Rules }
+  a2: &ipcidr { type: http, format: mrs, behavior: ipcidr, interval: 86400, proxy: Rules }
+  a3: &classical { type: http, format: text, behavior: classical, interval: 86400, proxy: Rules }
+  a4: &inline { type: inline, behavior: classical }
+
+# Селекторы
+proxy-groups:
+
+  - name: PROXY
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
+    include-all: true
+    proxies: [DIRECT, Fastest, Fallback,]
+
+  - name: Fastest
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
+    tolerance: 50
+    interval: 300
+    max-failed-times: 3
+    include-all: true
+    exclude-filter: "DNS|LTE|Обход|БC|Russia|Россия"
+
+  - name: Fallback
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png
+    interval: 300
+    max-failed-times: 3
+    include-all: true
+
+  - name: Rules
+    type: fallback
+    hidden: true
+    url: https://raw.githubusercontent.com
+    interval: 300
+    proxies: [Fallback, DIRECT]
+
+  - name: RU Zone
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Russia.png
+    include-all: false
+    proxies: [DIRECT]
+
+  - name: Adblock
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/AdBlack.png
+    include-all: false
+    proxies: [REJECT, PASS]
+
+  - name: Apple
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@HEAD/IconSet/Color/Apple_2.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: YouTube
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: Steam
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Steam.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: Origin
+    type: select
+    icon: https://www.svgrepo.com/show/354154/origin.svg
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: Epic Games
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Epic_Games.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: Reddit
+    type: select
+    icon: https://www.redditstatic.com/shreddit/assets/favicon/192x192.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: Telegram
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: Meta
+    type: select
+    icon: https://github.com/zxc-rv/assets/raw/main/group-icons/meta.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: User Proxy List
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+  - name: User Direct List
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
+# Провайдеры правил
+rule-providers:
+  adlist@domain: { <<: *domain, url: https://github.com/zxc-rv/ad-filter/releases/latest/download/adlist.mrs }
+  category-ru@domain: { <<: *domain, url: https://raw.githubusercontent.com/Davoyan/mihomo-rule-sets/main/rules/category-ru.mrs }
+  category-ru@ipcidr: { <<: *ipcidr, url: https://raw.githubusercontent.com/Davoyan/mihomo-rule-sets/main/ip-for-ru/lists/ips-for-ru.mrs }
+  apple@domain: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/apple.mrs }
+  steam@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs }
+  origin-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/origin.mrs }
+  ea-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/ea.mrs }
+  epicgames-geosite: { <<: *domain, url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/epicgames.mrs }
+  reddit@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/reddit.mrs }
+  telegram@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs }
+  telegram@ipcidr: { <<: *ipcidr, url: https://github.com/zxc-rv/zkeenip-rulesets/releases/latest/download/telegram@ipcidr.mrs }
+  meta@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/meta.mrs }
+  meta@ipcidr: { <<: *ipcidr, url: https://github.com/zxc-rv/zkeenip-rulesets/releases/latest/download/meta@ipcidr.mrs }
+  youtube@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs }
+  quic@inline: { <<: *inline, payload: ["AND,((DST-PORT,443),(NETWORK,UDP))"] }
+
+# Ручные списки
+  user-proxy@classical:
+    <<: *inline
+    payload: # Типы правил и примеры: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-SUFFIX,example.com
+  user-direct@classical: # СВОИ ПРАВИЛА
+    <<: *inline
+    payload: # Типы правил и примеры: https://wiki.metacubex.one/ru/config/rules/
+      - DOMAIN-SUFFIX,example.com
+
+# Правила маршрутизации
+rules:
+  - RULE-SET,adlist@domain,Adblock
+  - RULE-SET,quic@inline,REJECT # Блокировка QUIC
+  - OR,((DOMAIN-SUFFIX,gql.twitch.tv),(DOMAIN-SUFFIX,usher.ttvnw.net)),PROXY # Разблокировка высокого качества на Twitch.tv (может вызвать рекламу)
+  - RULE-SET,user-proxy@classical,User Proxy List
+  - RULE-SET,user-direct@classical,User Direct List
+  - RULE-SET,apple@domain,Apple
+  - RULE-SET,steam@domain,Steam
+  - OR,((RULE-SET,origin-geosite),(RULE-SET,ea-geosite)),Origin
+  - RULE-SET,epicgames-geosite,Epic Games
+  - RULE-SET,reddit@domain,Reddit
+  - OR,((RULE-SET,telegram@domain),(RULE-SET,telegram@ipcidr,no-resolve)),Telegram
+  - OR,((RULE-SET,meta@domain),(RULE-SET,meta@ipcidr,no-resolve)),Meta
+  - RULE-SET,youtube@domain,YouTube
+  - OR,((RULE-SET,category-ru@domain),(RULE-SET,category-ru@ipcidr)),DIRECT
+  - MATCH,PROXY
