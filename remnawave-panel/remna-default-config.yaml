@@ -274,7 +274,7 @@ rules:
   - RULE-SET,epicgames-geosite,Games
   
   # RU zone
-  - OR,((RULE-SET,geosite-ru),(RULE-SET,geoip-ru,no-resolve)),DIRECT
+  - OR,((RULE-SET,geosite-ru),(RULE-SET,geoip-ru)),DIRECT
   
   # Все остальное в PROXY
   - MATCH,VPN
