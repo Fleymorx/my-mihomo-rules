@@ -1,4 +1,5 @@
 # Преднастройки
+mixed-port: 7890
 allow-lan: false
 mode: rule
 log-level: error
@@ -8,10 +9,6 @@ unified-delay: true
 tcp-concurrent: true
 
 hosts:
-  ser1: ***
-  ser2: ***
-  ser3: ***
-  ser4: ***
 
 profile:
   store-selected: true
@@ -54,7 +51,7 @@ sniffer:
 
 tun:
   enable: true
-  stack: mixed
+  stack: mips
   auto-route: true
   auto-detect-interface: true
   dns-hijack:
@@ -149,14 +146,13 @@ proxy-groups:
   - name: VPN
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png
-    proxies: [⚡️ Auto] # LEAVE THIS LINE!
+    proxies: [⚡️ Auto]
 
   - name: ⚡️ Auto
     type: fallback
     hidden: true
     url: http://connectivitycheck.gstatic.com/generate_204
     interval: 300
-    max-failed-times: 3
     proxies: # LEAVE THIS LINE!
 
   - name: Rules
@@ -204,6 +200,7 @@ rule-providers:
   # Выборочные сервисы
   ru-inside-geosite: { <<: *classical-text, url: https://raw.githubusercontent.com/itdoginfo/allow-domains/main/Russia/inside-clashx.lst }
   apple-geosite: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs }
+  category-ip-geo-detect: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ip-geo-detect.mrs }
 
   # Реклама
   adlist-geosite: { <<: *domain, url: https://github.com/zxc-rv/ad-filter/releases/latest/download/adlist.mrs }
@@ -254,6 +251,9 @@ rules:
 
   # Блокировка QUIC
   - AND,((NETWORK,udp),(DST-PORT,443)),REJECT
+
+  # IP-чекеры в DIRECT
+  - RULE-SET,category-ip-geo-detect,DIRECT
 
   # Ручные списки в VPN
   - RULE-SET,proxy-inline,VPN
