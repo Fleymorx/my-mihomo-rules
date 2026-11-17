@@ -221,7 +221,7 @@ rules:
   - RULE-SET,adlist@domain,Adblock
   - RULE-SET,quic@inline,REJECT # Блокировка QUIC
   - OR,((DOMAIN-SUFFIX,gql.twitch.tv),(DOMAIN-SUFFIX,usher.ttvnw.net)),PROXY # Разблокировка высокого качества на Twitch.tv (может вызвать рекламу)
-  - RULE-set,ip-checkers@domain,IP Checkers
+  - RULE-SET,ip-checkers@domain,IP Checkers
   - RULE-SET,user-proxy@classical,User Proxy List
   - RULE-SET,user-direct@classical,User Direct List
   - RULE-SET,apple@domain,Apple
