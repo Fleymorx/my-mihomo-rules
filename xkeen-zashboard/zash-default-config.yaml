@@ -92,7 +92,6 @@ proxy-groups:
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png
     tolerance: 50
     interval: 300
-    max-failed-times: 3
     include-all: true
     exclude-filter: "DNS|LTE|Обход|БC|Russia|Россия"
 
@@ -101,7 +100,6 @@ proxy-groups:
     url: https://www.gstatic.com/generate_204
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png
     interval: 300
-    max-failed-times: 3
     include-all: true
 
   - name: Rules
@@ -171,6 +169,12 @@ proxy-groups:
     include-all: true
     proxies: [DIRECT, PROXY, Fastest, Fallback]
 
+  - name: IP Checkers
+    type: select
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Server.png
+    include-all: true
+    proxies: [DIRECT, PROXY, Fastest, Fallback]
+
   - name: User Proxy List
     type: select
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png
@@ -199,6 +203,7 @@ rule-providers:
   meta@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/meta.mrs }
   meta@ipcidr: { <<: *ipcidr, url: https://github.com/zxc-rv/zkeenip-rulesets/releases/latest/download/meta@ipcidr.mrs }
   youtube@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs }
+  ip-checkers@domain: { <<: *domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ip-geo-detect.mrs }
   quic@inline: { <<: *inline, payload: ["AND,((DST-PORT,443),(NETWORK,UDP))"] }
 
 # Ручные списки
@@ -216,6 +221,7 @@ rules:
   - RULE-SET,adlist@domain,Adblock
   - RULE-SET,quic@inline,REJECT # Блокировка QUIC
   - OR,((DOMAIN-SUFFIX,gql.twitch.tv),(DOMAIN-SUFFIX,usher.ttvnw.net)),PROXY # Разблокировка высокого качества на Twitch.tv (может вызвать рекламу)
+  - RULE-set,ip-checkers@domain,IP Checkers
   - RULE-SET,user-proxy@classical,User Proxy List
   - RULE-SET,user-direct@classical,User Direct List
   - RULE-SET,apple@domain,Apple
